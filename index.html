@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .head {
+            width: 100%;
+            height: 50px;
+            background: #ededed;
+        }
+
+        .wrap {
+            width: 1000px;
+            margin: 0 auto;
+        }
+
+        .wrap img {
+            width: 72px;
+            height: 25px;
+            margin-top: 12px;
+        }
+
+        .container {
+            width: 1000px;
+            margin: 0 auto;
+        }
+
+        .nav {
+            width: 100px;
+            position: fixed;
+            left: 7%;
+            top: 100px;
+            z-index: 10;
+            display: none;
+        }
+
+        .nav .nav-item {
+            width: 60px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background: #ccc;
+            color: #fff;
+            border-bottom: 1px solid #ededed;
+            cursor: pointer;
+            margin-left: 20px;
+        }
+
+        .nav .on {
+            background: #ff0000;
+        }
+        /* .nav-item:last-child {
+            border: 0;
+            width: 100px;
+            height: 50px;
+            border-radius: 50%;
+            line-height: 50px;
+            margin: 0;
+        } */
+
+        .floor img {
+            display: block;
+            width: 520px;
+            margin: 50px auto;
+        }
+
+        .floor hr {
+            height: 5px;
+            border: 0;
+            background: #ff0000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="head">
+        <div class="wrap">
+            <img src="img/logo.png" alt="">
+        </div>
+    </div>
+    <div class="container banner">
+        <img src="img/bg.png" alt="">
+    </div>
+    <div class="container floor">
+        <img src="img/banner1.png" alt="">
+        <hr>
+        <img src="img/banner2.png" alt="">
+        <hr>
+        <img src="img/banner3.png" alt="">
+        <hr>
+        <img src="img/banner4.png" alt="">
+        <hr>
+    </div>
+    <ul class="nav">
+        <li class="nav-item on">发现</li>
+        <li class="nav-item">关注</li>
+        <li class="nav-item">附近</li>
+        <li class="nav-item">首页</li>
+    </ul>
+    <script>
+        //吸顶
+            var  head = document.querySelector(".head");//获取头部
+            var banner = document.querySelector(".banner");//获取banner
+            var nav = document.querySelector(".nav");//楼层灯
+            var  navArr = document.querySelectorAll(".nav li");
+        var floorArr = document.querySelectorAll(".floor img");
+//        吸顶
+        window.onscroll= function () {
+                var top = document.documentElement.scrollTop||document.body.scrollTop;
+            var bannerTop = banner.offsetTop+banner.offsetHeight;
+            if(top>bannerTop){
+                head.style.position="fixed";//固定定位
+                head.style.top="0px";
+                nav.style.display = "block";
+            }else{
+                head.style.position="static";
+                nav.style.display = "none";
+            }
+//            2、点亮楼层
+                for(var i=0;i<floorArr.length;i++){
+                    var floorTop = floorArr[i].offsetTop;//记录下每一个图片的顶部距离
+                    if(top>floorTop){//滚动的距离和每一张图片的高度做比较
+                        for(var j=0;j<floorArr.length;j++){//排他
+                            navArr[j].classList.remove("on");//去掉所有li的所有类名
+                        }
+                        navArr[i].classList.add("on");//给指定的li添加一个类名;
+                    }
+                }
+//           3、 点击回到对应的楼层
+            for(var i=0;i<navArr.length;i++){
+                navArr[i].index=i;
+                navArr[i].onclick=toFloor;
+            }
+        };
+        function toFloor(){
+            clearInterval(window.timer);//先关闭定时器 再开启下一个定时器;
+            var top = document.documentElement.scrollTop||document.body.scrollTop;//实时监听top的值
+            var  navTop =  floorArr[this.index].offsetTop;//获取点击对应楼层的高度
+            window.timer = setInterval(function () {//开启定时器
+                if(top>navTop){//滚动的距离与图片距离浏览器最顶部的距离左比较
+                       top-=20;// 如果滚动的距离大于图片距离浏览器最顶部的距离，那么 让top -=20
+                    document.documentElement.scrollTop?//设置回去
+                            document.documentElement.scrollTop=top:
+                            document.body.scrollTop=top;
+                }else{
+                    top+=20;
+                    if(top>navTop){
+                        clearInterval(window.timer);
+                    }
+                    document.documentElement.scrollTop?
+                            document.documentElement.scrollTop=top:
+                            document.body.scrollTop=top;
+                };
+            },20)
+
+        }
+    </script>
+</body>
+
+</html>
